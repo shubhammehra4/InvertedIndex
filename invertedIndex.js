@@ -25,7 +25,7 @@ class InvertedIndex {
     this.invertedIndexObject = {};
 
     books.forEach((book, idx) => {
-      let indexString = (book.title + book.author).toLowerCase().trim();
+      let indexString = `${book.title} ${book.author}`.toLowerCase().trim();
 
       /** Also possible to save the position of the query string in the document */
       this.doStemming(indexString).reduce((acc, word) => {
@@ -75,7 +75,7 @@ class InvertedIndex {
         res.forEach((id) => set.add(this.doc[id]));
 
         const response = Array.from(set);
-        return { found: response.length, response };
+        return { found: response.length, response, total: this.doc.length };
       }
       if (Array.isArray(term)) {
         term = term.map((data) => this.doStemming(data).join());
@@ -85,13 +85,13 @@ class InvertedIndex {
         }
 
         const response = Array.from(set);
-        return { found: response.length, response };
+        return { found: response.length, response, total: this.doc.length };
       }
 
       throw "Search term type invalid: not string or array.";
     } catch (error) {
       console.log("No result found");
-      return { found: 0, response: null };
+      return { found: 0, response: null, total: this.doc.length };
     }
   }
 
@@ -132,10 +132,7 @@ class InvertedIndex {
   }
 
   getArrayIntersection(a1, a2) {
-    return a1.filter((n) => {
-      console.log(a2, n);
-      return true;
-    });
+    return a1.filter((n) => a2.indexOf(n) !== -1);
   }
   /**
    * Process phrase query
@@ -143,7 +140,13 @@ class InvertedIndex {
    * @returns result
    */
   verifyTermIsPhrase(term) {
-    return term.split(",").flatMap((w) => this.verifyTermIsString(w));
+    const res = term.split(",").map((w) => this.verifyTermIsString(w));
+    let test = res[0];
+    for (let i = 1; i < res.length; i++) {
+      test = this.getArrayIntersection(test, res[i]);
+    }
+
+    return test;
   }
 
   //takes term and docReference as arugument and returns the number of times term is present in the reference documnet
