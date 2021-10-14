@@ -22,8 +22,8 @@ import axios from "axios";
 import { SyntheticEvent, useRef, useState } from "react";
 import Card from "./Card";
 
-const SERVER_URL = "http://localhost:5000";
-// const SERVER_URL = "https://invertedindexir.herokuapp.com";
+// const SERVER_URL = "http://localhost:5000";
+const SERVER_URL = "https://invertedindexir.herokuapp.com";
 
 export interface Book {
   title: string;
