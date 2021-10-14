@@ -4,6 +4,7 @@ import {
   Button,
   Center,
   FormControl,
+  FormHelperText,
   FormLabel,
   HStack,
   Input,
@@ -52,12 +53,13 @@ function App() {
     if (!searchRef.current?.value) {
       return;
     }
+    const val = searchRef.current.value.split(",");
+    const inputQuery = val.length == 1 ? val[0] : val;
+
     setLoading(true);
     const { data }: { data: ResponseData } = await axios.post(
       SERVER_URL + "/getData",
-      {
-        inputQuery: searchRef.current.value,
-      }
+      { inputQuery }
     );
     if (data.found == 0) {
       setNotFound(true);
@@ -72,7 +74,7 @@ function App() {
       <form onSubmit={handleSearch}>
         <FormControl id="search">
           <FormLabel htmlFor="search" fontWeight="semibold" color="twitter.600">
-            Search
+            Search Books
           </FormLabel>
           <InputGroup size="lg">
             <InputLeftElement pointerEvents="none" children={<SearchIcon />} />
@@ -89,13 +91,17 @@ function App() {
               </Button>
             </InputRightElement>
           </InputGroup>
+
+          <FormHelperText>
+            To search multiple querries separate them with commas.
+          </FormHelperText>
         </FormControl>
       </form>
 
       <Box mt="5">
         {notFound && !loading && (
           <Center>
-            <Text>Nothing Found</Text>
+            <Text>Nothing matches the query</Text>
           </Center>
         )}
         {!books && !notFound && !loading && (
