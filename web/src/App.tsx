@@ -109,17 +109,15 @@ function App() {
             <Text>Type query to get results</Text>
           </Center>
         )}
-        {books && (
-          <>
-            {loading ? (
-              <BookSkeleton />
-            ) : (
-              <Stack spacing="8">
-                {books?.response &&
-                  books.response.map((b, i) => <Card key={i} {...b} />)}
-              </Stack>
-            )}
-          </>
+
+        {loading ? (
+          <BookSkeleton />
+        ) : (
+          <Stack spacing="8">
+            {books &&
+              books?.response &&
+              books.response.map((b, i) => <Card key={i} {...b} />)}
+          </Stack>
         )}
       </Box>
     </Box>
@@ -131,7 +129,7 @@ export default App;
 function BookSkeleton() {
   return (
     <Box>
-      <VStack spacing="2">
+      <VStack spacing="8">
         {[1, 2].map((ele) => {
           return (
             <>
@@ -140,7 +138,6 @@ function BookSkeleton() {
                 p="8"
                 shadow="md"
                 rounded="xl"
-                bg="gray.50"
                 w="full"
                 minH="200px"
               >
