@@ -1,3 +1,4 @@
+const e = require("cors");
 const fs = require("fs");
 const natural = require("natural");
 const path = require("path");
@@ -79,19 +80,19 @@ class InvertedIndex {
    * @param {string | string[]} term
    * @returns {[{}]} response
    */
-  searchIndex(term) {
+  searchIndex(inputTerm) {
     try {
       let res;
       const set = new Set();
-      if (typeof term === "string") {
-        term = this.doStemming(term).join();
+      if (typeof inputTerm === "string") {
+        term = this.doStemming(inputTerm).join();
         res = this.verifyTermIsString(term);
         res.forEach((id) => set.add(this.doc[id]));
 
         const response = Array.from(set);
         return { found: response.length, response, total: this.doc.length };
       }
-      if (Array.isArray(term)) {
+      if (Array.isArray(inputTerm)) {
         term = term.map((data) => this.doStemming(data).join());
         res = this.verifyTermIsArray(term);
         for (let word of Object.values(res)) {
@@ -105,7 +106,22 @@ class InvertedIndex {
       throw "Search term type invalid: not string or array.";
     } catch (error) {
       console.log("No result found");
-      const suggestions = this.spellcheck.getCorrections(term, 2);
+
+      let suggestions = null;
+      if (typeof inputTerm === "string") {
+        if (inputTerm.split(" ").length > 1) {
+          suggestions = inputTerm
+            .split(" ")
+            .flatMap((s) => this.spellcheck.getCorrections(s, 2));
+        } else {
+          suggestions = this.spellcheck.getCorrections(inputTerm, 2);
+        }
+      } else if (Array.isArray(inputTerm)) {
+        suggestions = inputTerm.flatMap((s) =>
+          this.spellcheck.getCorrections(s, 2)
+        );
+      }
+
       return {
         found: 0,
         response: null,
