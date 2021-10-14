@@ -15,6 +15,7 @@ class InvertedIndex {
     this.doc = file;
     this.books = books;
     this.optimize(this.books);
+    this.implementSpellCheck();
   }
 
   /**
@@ -38,6 +39,19 @@ class InvertedIndex {
         return acc;
       }, this.invertedIndexObject);
     });
+  }
+
+  /**
+   * Implememts Spell checker using Tries.
+   */
+  implementSpellCheck() {
+    let corpus = this.books.flatMap((book) => {
+      let books = book.title.toLowerCase().split(" ");
+      let authors = book.author.toLowerCase().split(" ");
+
+      return [...books, ...authors];
+    });
+    this.spellcheck = new natural.Spellcheck(corpus);
   }
 
   /**
@@ -91,7 +105,13 @@ class InvertedIndex {
       throw "Search term type invalid: not string or array.";
     } catch (error) {
       console.log("No result found");
-      return { found: 0, response: null, total: this.doc.length };
+      const suggestions = this.spellcheck.getCorrections(term, 2);
+      return {
+        found: 0,
+        response: null,
+        total: this.doc.length,
+        suggestions,
+      };
     }
   }
 

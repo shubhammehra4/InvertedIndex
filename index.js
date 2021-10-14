@@ -1,8 +1,10 @@
 process.on("uncaughtException", (err) => {
   console.log("Encountered uncaughtException", { err });
+  process.exit(1);
 });
 process.on("unhandledRejection", (err) => {
   console.log("Encountered unhandledRejection", { err });
+  process.exit(1);
 });
 
 const express = require("express");
