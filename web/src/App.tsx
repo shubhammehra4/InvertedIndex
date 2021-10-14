@@ -17,6 +17,9 @@ import {
   Stack,
   Text,
   VStack,
+  UnorderedList,
+  ListItem,
+  List,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { SyntheticEvent, useRef, useState } from "react";
@@ -40,6 +43,7 @@ interface ResponseData {
   found: number;
   response: Book[] | null;
   total: number;
+  suggestions?: string[];
 }
 
 function App() {
@@ -47,6 +51,7 @@ function App() {
   const [books, setBooks] = useState<ResponseData | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
   const [notFound, setNotFound] = useState(false);
+  const [recommendations, setRecommendations] = useState<string[]>([]);
 
   async function handleSearch(e: SyntheticEvent) {
     e.preventDefault();
@@ -67,6 +72,7 @@ function App() {
       );
       if (data.found == 0) {
         setNotFound(true);
+        if (data.suggestions) setRecommendations(data.suggestions);
       }
       if (data.response) setBooks(data);
 
@@ -118,9 +124,33 @@ function App() {
 
       <Box mt="5">
         {notFound && !loading && (
-          <Center>
-            <Text>Nothing matches the query</Text>
-          </Center>
+          <Box display="flex" flexDir="column" alignItems="center">
+            <Text fontSize="2xl">Nothing matches the query</Text>
+            {recommendations.length > 0 && (
+              <>
+                <Text>Are You Searching for:</Text>
+                <List>
+                  {recommendations.map((m, i) => (
+                    <ListItem
+                      _hover={{
+                        textDecoration: "underline",
+                      }}
+                      cursor="pointer"
+                      onClick={() => {
+                        if (!searchRef.current?.value) {
+                          return;
+                        }
+                        searchRef.current.value = m;
+                        searchRef.current.focus();
+                      }}
+                    >
+                      {m}
+                    </ListItem>
+                  ))}
+                </List>
+              </>
+            )}
+          </Box>
         )}
         {!books && !notFound && !loading && (
           <Center>
