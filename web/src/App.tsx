@@ -22,7 +22,7 @@ import axios from "axios";
 import { SyntheticEvent, useRef, useState } from "react";
 import Card from "./Card";
 
-const SERVER_URL = "http://localhost:5000";
+const SERVER_URL = "https://invertedindexir.herokuapp.com";
 
 export interface Book {
   title: string;
@@ -53,20 +53,26 @@ function App() {
     if (!searchRef.current?.value) {
       return;
     }
-    const val = searchRef.current.value.split(",");
-    const inputQuery = val.length == 1 ? val[0] : val;
+    try {
+      const val = searchRef.current.value.split(",");
+      const inputQuery = val.length == 1 ? val[0] : val;
 
-    setLoading(true);
-    const { data }: { data: ResponseData } = await axios.post(
-      SERVER_URL + "/getData",
-      { inputQuery }
-    );
-    if (data.found == 0) {
-      setNotFound(true);
+      setLoading(true);
+
+      const { data }: { data: ResponseData } = await axios.post(
+        SERVER_URL + "/getData",
+        { inputQuery }
+      );
+      if (data.found == 0) {
+        setNotFound(true);
+      }
+      if (data.response) setBooks(data);
+
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      alert("Something went wrong");
     }
-    if (data.response) setBooks(data);
-
-    setLoading(false);
   }
 
   return (
