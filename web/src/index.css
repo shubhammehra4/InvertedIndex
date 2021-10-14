@@ -14,8 +14,8 @@ code {
 
 :root {
   --star-size: 20px;
-  --star-color: rgb(209, 209, 209);
-  --star-background: red;
+  --star-color: #bfbfbf;
+  --star-background: #e63946;
 }
 
 .Stars {

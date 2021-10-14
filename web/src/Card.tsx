@@ -24,7 +24,7 @@ const Card: React.FC<Book> = ({
           <HStack justifyContent="space-between">
             <Box>
               <Heading fontSize="2xl">{title}</Heading>
-              <Text color="gray.700" isTruncated maxW="80">
+              <Text color="gray.200" isTruncated maxW="80">
                 {author} - {publisher}
               </Text>
             </Box>
