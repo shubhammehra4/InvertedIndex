@@ -22,7 +22,8 @@ import axios from "axios";
 import { SyntheticEvent, useRef, useState } from "react";
 import Card from "./Card";
 
-const SERVER_URL = "https://invertedindexir.herokuapp.com";
+const SERVER_URL = "http://localhost:5000";
+// const SERVER_URL = "https://invertedindexir.herokuapp.com";
 
 export interface Book {
   title: string;
@@ -38,6 +39,7 @@ export interface Book {
 interface ResponseData {
   found: number;
   response: Book[] | null;
+  total: number;
 }
 
 function App() {
@@ -75,6 +77,15 @@ function App() {
     }
   }
 
+  function clearBooks() {
+    setBooks(undefined);
+    if (!searchRef.current?.value) {
+      return;
+    }
+    searchRef.current.value = "";
+    searchRef.current.focus();
+  }
+
   return (
     <Box mx="auto" maxW="5xl" mt="20">
       <form onSubmit={handleSearch}>
@@ -90,6 +101,7 @@ function App() {
               ref={searchRef}
               autoComplete="off"
               placeholder="Search query, phrase, queries"
+              autoFocus
             />
             <InputRightElement width="4.5rem" mx="2">
               <Button type="submit" colorScheme="linkedin" my="auto">
@@ -99,7 +111,7 @@ function App() {
           </InputGroup>
 
           <FormHelperText>
-            To search multiple querries separate them with commas.
+            For multiple queries, enter comma separated words
           </FormHelperText>
         </FormControl>
       </form>
@@ -120,9 +132,21 @@ function App() {
           <BookSkeleton />
         ) : (
           <Stack spacing="8">
-            {books &&
-              books?.response &&
-              books.response.map((b, i) => <Card key={i} {...b} />)}
+            {books && books?.response && (
+              <>
+                <HStack justifyContent="space-between">
+                  <Text>
+                    Found - {books.found} out of {books.total} documents
+                  </Text>
+                  <Button onClick={clearBooks} colorScheme="teal">
+                    Clear
+                  </Button>
+                </HStack>
+                {books.response.map((b, i) => (
+                  <Card key={i} {...b} />
+                ))}
+              </>
+            )}
           </Stack>
         )}
       </Box>
