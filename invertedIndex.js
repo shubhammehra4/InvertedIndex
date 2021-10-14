@@ -25,18 +25,16 @@ class InvertedIndex {
     this.invertedIndexObject = {};
 
     books.forEach((book, idx) => {
-      let indexString = (book.title + book.author)
-        .toLowerCase()
-        .replace(/\W+/g, " ")
-        .trim();
+      let indexString = (book.title + book.author).toLowerCase().trim();
 
-      this.doStemming(indexString).reduce((acc, word, wordIdx) => {
+      /** Also possible to save the position of the query string in the document */
+      this.doStemming(indexString).reduce((acc, word) => {
         if (word in acc) {
-          acc[word].push([idx, wordIdx]);
+          acc[word].push(idx);
           return acc;
         }
 
-        acc[word] = [[idx, wordIdx]];
+        acc[word] = [idx];
         return acc;
       }, this.invertedIndexObject);
     });
@@ -74,30 +72,33 @@ class InvertedIndex {
       if (typeof term === "string") {
         term = this.doStemming(term).join();
         res = this.verifyTermIsString(term);
-        res.forEach(([id, ...rest]) => set.add(this.doc[id]));
+        res.forEach((id) => set.add(this.doc[id]));
 
-        return Array.from(set);
+        const response = Array.from(set);
+        return { found: response.length, response };
       }
       if (Array.isArray(term)) {
         term = term.map((data) => this.doStemming(data).join());
         res = this.verifyTermIsArray(term);
         for (let word of Object.values(res)) {
-          word.forEach(([id, ...rest]) => set.add(this.doc[id]));
+          word.forEach((id) => set.add(this.doc[id]));
         }
 
-        return Array.from(set);
+        const response = Array.from(set);
+        return { found: response.length, response };
       }
 
       throw "Search term type invalid: not string or array.";
     } catch (error) {
-      return error;
+      console.log("No result found");
+      return { found: 0, response: null };
     }
   }
 
   /**
    * Process Array of terms
    * @param {string[]} termArray Array of terms
-   * @returns {{}} res
+   * @returns {{}} result
    */
   verifyTermIsArray(termArray) {
     this.termArrayObject = {};
@@ -115,7 +116,7 @@ class InvertedIndex {
   /**
    * Process singular term
    * @param {string} term term to search
-   * @returns {string[]}
+   * @returns {string[]} result
    */
   verifyTermIsString(term) {
     if (term.split(",").length > 1) {
@@ -139,7 +140,7 @@ class InvertedIndex {
   /**
    * Process phrase query
    * @param {string} term phrase to search
-   * @returns
+   * @returns result
    */
   verifyTermIsPhrase(term) {
     return term.split(",").flatMap((w) => this.verifyTermIsString(w));

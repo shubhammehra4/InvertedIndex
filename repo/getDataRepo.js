@@ -15,7 +15,7 @@ class GetDataRepo {
         //   }
         // }
 
-        return resolve({ response });
+        return resolve(response);
       } catch (err) {
         console.log(err);
         return reject(err);

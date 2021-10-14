@@ -9,7 +9,7 @@ const express = require("express");
 const cors = require("cors");
 const container = require("./di/index");
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.SERVER_PORT || 5000;
 
 const app = express();
 app.use(cors());
