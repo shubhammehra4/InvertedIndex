@@ -85,7 +85,7 @@ class InvertedIndex {
       let res;
       const set = new Set();
       if (typeof inputTerm === "string") {
-        term = this.doStemming(inputTerm).join();
+        let term = this.doStemming(inputTerm).join();
         res = this.verifyTermIsString(term);
         res.forEach((id) => set.add(this.doc[id]));
 
@@ -93,7 +93,7 @@ class InvertedIndex {
         return { found: response.length, response, total: this.doc.length };
       }
       if (Array.isArray(inputTerm)) {
-        term = term.map((data) => this.doStemming(data).join());
+        let term = inputTerm.map((data) => this.doStemming(data).join());
         res = this.verifyTermIsArray(term);
         for (let word of Object.values(res)) {
           word.forEach((id) => set.add(this.doc[id]));
