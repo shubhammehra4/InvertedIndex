@@ -49,7 +49,6 @@ class InvertedIndex {
     let corpus = this.books.flatMap((book) => {
       let books = book.title.toLowerCase().split(" ");
       let authors = book.author.toLowerCase().split(" ");
-
       return [...books, ...authors];
     });
     this.spellcheck = new natural.Spellcheck(corpus);
