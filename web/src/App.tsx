@@ -11,15 +11,14 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
+  List,
+  ListItem,
   Skeleton,
   SkeletonCircle,
   SkeletonText,
   Stack,
   Text,
   VStack,
-  UnorderedList,
-  ListItem,
-  List,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { SyntheticEvent, useRef, useState } from "react";
@@ -34,7 +33,7 @@ export interface Book {
   coverImg: string;
   description: string;
   genres: string;
-  price: number;
+  price?: number;
   publisher: string;
   rating: number;
 }
@@ -58,6 +57,7 @@ function App() {
     setBooks(undefined);
     setNotFound(false);
     if (!searchRef.current?.value) {
+      searchRef.current?.focus();
       return;
     }
     try {
@@ -85,7 +85,7 @@ function App() {
 
   function clearBooks() {
     setBooks(undefined);
-    if (!searchRef.current?.value) {
+    if (!searchRef.current) {
       return;
     }
     searchRef.current.value = "";
@@ -110,7 +110,7 @@ function App() {
               autoFocus
             />
             <InputRightElement width="4.5rem" mx="2">
-              <Button type="submit" colorScheme="linkedin" my="auto">
+              <Button type="submit" colorScheme="linkedin" isLoading={loading}>
                 Search
               </Button>
             </InputRightElement>
@@ -168,7 +168,7 @@ function App() {
                   <Text>
                     Found - {books.found} out of {books.total} documents
                   </Text>
-                  <Button onClick={clearBooks} colorScheme="teal">
+                  <Button onClick={clearBooks} colorScheme="red">
                     Clear
                   </Button>
                 </HStack>
