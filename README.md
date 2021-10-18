@@ -1,6 +1,6 @@
 # Information Retrieval using Inverted Index
 
-<a href="https://inverted-index.netlify.app/" rel="external" target="_blank">Live Demo</a>
+<a href="https://inverted-index.netlify.app/" target="_blank">Live Demo</a>
 
 ## Run Locally
 
@@ -13,7 +13,7 @@
   `npm install`
 - Run Dev
   `npm run dev`
-- Run Start
+- Run Prod
   `npm start`
 
 ### Client
