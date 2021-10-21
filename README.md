@@ -1,6 +1,8 @@
 # Information Retrieval using Inverted Index
 
 <a href="https://inverted-index.netlify.app/" target="_blank">Live Demo</a>
+<br/>
+<a href="https://github.com/scostap/goodreads_bbe_dataset" target="_blank">Books Dataset</a>
 
 ## Run Locally
 
