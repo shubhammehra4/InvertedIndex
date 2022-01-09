@@ -14,15 +14,15 @@ const { validate } = require("../models/validation");
 container.register("utility", asValue(utility));
 container.register("validate", asValue(validate));
 
-const GetDataRepo = require("../repo/getDataRepo");
-const getDataRepo = new GetDataRepo(container);
-
 // repos
-container.register("getDataRepo", asValue(getDataRepo));
+const GetBooksRepo = require("../repo/getBooksRepo");
+const getBooksRepo = new GetBooksRepo(container);
+container.register("getBooksRepo", asValue(getBooksRepo));
 
-const GetData = require("../api/getData");
-const getData = new GetData(container);
+const GetBooks = require("../api/getBooks");
+const getBooks = new GetBooks(container);
+
 // apis
-container.register("getData", asValue(getData));
+container.register("getBooks", asValue(getBooks));
 
 module.exports = container;

@@ -1,6 +1,6 @@
 const joi = require("joi");
 module.exports = {
-  getData: joi
+  getBooks: joi
     .object()
     .keys({
       inputQuery: joi.string().required(),

@@ -1,21 +1,19 @@
-const e = require("cors");
 const fs = require("fs");
 const natural = require("natural");
-const path = require("path");
 
 /**
  * Class to create and access Inverted Index
  */
 class InvertedIndex {
   constructor() {
-    const filePath = path.join(__dirname, "./dataset.json");
-    const rawFile = fs.readFileSync(filePath, "utf-8");
-    const file = JSON.parse(rawFile);
+    const filePath = `${__dirname}/dataset.json`;
+    const file = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+
     const books = file.map(({ title, author }) => ({ title, author }));
 
     this.doc = file;
     this.books = books;
-    this.optimize(this.books);
+    this.createInvertedIndex(this.books);
     this.implementSpellCheck();
   }
 
@@ -23,7 +21,7 @@ class InvertedIndex {
    * Optimization Function, Creates Optimized Inverted Index
    * @param {[{title:string, author:string}]} books
    */
-  optimize(books) {
+  createInvertedIndex(books) {
     this.invertedIndexObject = {};
 
     books.forEach((book, idx) => {
@@ -47,11 +45,19 @@ class InvertedIndex {
    */
   implementSpellCheck() {
     let corpus = this.books.flatMap((book) => {
-      let books = book.title.toLowerCase().split(" ");
-      let authors = book.author.toLowerCase().split(" ");
+      let books = book.title
+        .toLowerCase()
+        .replace(/[&\/\\#,+()$~%.'":*?<>{}\[\]]/g, "")
+        .split(" ");
+      let authors = book.author
+        .toLowerCase()
+        .replace(/[&\/\\#,+()$~%.'":*?<>{}\[\]]/g, "")
+        .split(" ");
       return [...books, ...authors];
     });
-    this.spellcheck = new natural.Spellcheck(corpus);
+
+    let filteredCorpus = corpus.filter((a) => a.length > 2);
+    this.spellcheck = new natural.Spellcheck(filteredCorpus);
   }
 
   /**
@@ -104,8 +110,6 @@ class InvertedIndex {
 
       throw "Search term type invalid: not string or array.";
     } catch (error) {
-      console.log("No result found");
-
       let suggestions = null;
       if (typeof inputTerm === "string") {
         if (inputTerm.split(" ").length > 1) {
@@ -127,6 +131,45 @@ class InvertedIndex {
         total: this.doc.length,
         suggestions,
       };
+    }
+  }
+
+  /**
+   * Search Suggestions
+   * @param {string} inputTerm
+   */
+  getSuggestions(inputTerm) {
+    let res;
+    const set = new Set();
+
+    if (typeof inputTerm === "string") {
+      let term = this.doStemming(inputTerm).join();
+      res = this.verifyTermIsString(term);
+      res.slice(0, 8).forEach((id) =>
+        set.add({
+          coverImg: this.doc[id].coverImg,
+          title: this.doc[id].title,
+        })
+      );
+
+      const response = Array.from(set);
+      return response;
+    }
+
+    if (Array.isArray(inputTerm)) {
+      let term = inputTerm.map((data) => this.doStemming(data).join());
+      res = this.verifyTermIsArray(term);
+      for (let word of Object.values(res)) {
+        word.slice(0, 5).forEach((id) =>
+          set.add({
+            coverImg: this.doc[id].coverImg,
+            title: this.doc[id].title,
+          })
+        );
+      }
+
+      const response = Array.from(set);
+      return response;
     }
   }
 

@@ -1,6 +1,6 @@
 import { Box, Heading, HStack, Image, Stack, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { Book } from "./App";
+import { Book } from "../types";
 
 const Card: React.FC<Book> = ({
   title,
@@ -31,14 +31,14 @@ const Card: React.FC<Book> = ({
                 color="gray.200"
                 cursor="pointer"
                 isTruncated={!showAuthor}
-                onClick={() => setShowAuthor((p) => !p)}
+                onClick={() => setShowAuthor((cond) => !cond)}
                 maxW="80"
               >
                 {author} - {publisher}
               </Text>
             </Box>
             <Stack alignItems="flex-end">
-              <Text fontWeight="semibold">{price ? "$ " + price : "N/A"}</Text>
+              <Text fontWeight="semibold">{price ? `\$ ${price}` : "N/A"}</Text>
               <Box
                 className="Stars"
                 style={{ "--rating": rating.toString() } as React.CSSProperties}
@@ -49,8 +49,8 @@ const Card: React.FC<Book> = ({
             mt="3"
             cursor="pointer"
             fontSize="sm"
-            noOfLines={showDesc ? 10 : 3}
-            onClick={() => setShowDesc((prev) => !prev)}
+            noOfLines={showDesc ? 12 : 3}
+            onClick={() => setShowDesc((cond) => !cond)}
           >
             {description}
           </Text>

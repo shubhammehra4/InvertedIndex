@@ -1,3 +1,7 @@
+const express = require("express");
+const cors = require("cors");
+const container = require("./di/index");
+
 process.on("uncaughtException", (err) => {
   console.log("Encountered uncaughtException", { err });
   process.exit(1);
@@ -6,10 +10,6 @@ process.on("unhandledRejection", (err) => {
   console.log("Encountered unhandledRejection", { err });
   process.exit(1);
 });
-
-const express = require("express");
-const cors = require("cors");
-const container = require("./di/index");
 
 const PORT = process.env.PORT || 5000;
 
@@ -21,8 +21,12 @@ app.get("/", (_req, res) => {
   res.send("Health Check OK!!");
 });
 
-app.post("/getData", (req, res) => {
-  return container.resolve("getData").handleRequest(req, res);
+app.get("/getBooks", (req, res) => {
+  return container.resolve("getBooks").handleSearchRequest(req, res);
+});
+
+app.get("/searchSuggestions", (req, res) => {
+  return container.resolve("getBooks").handleSuggestionsRequest(req, res);
 });
 
 app.use((_req, res) => {
