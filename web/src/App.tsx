@@ -98,8 +98,11 @@ export default function App() {
       return;
     }
 
+    const val = searchRef.current.value.split(",");
+    const inputQuery = val.length == 1 ? val[0] : val;
+
     const { data } = await server.get<Suggestion[]>("/searchSuggestions", {
-      params: { inputQuery: searchRef.current.value },
+      params: { inputQuery },
     });
     setSuggestions(data);
   }, 300);

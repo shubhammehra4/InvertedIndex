@@ -145,6 +145,8 @@ class InvertedIndex {
     if (typeof inputTerm === "string") {
       let term = this.doStemming(inputTerm).join();
       res = this.verifyTermIsString(term);
+      if (res === undefined) return [];
+
       res.slice(0, 8).forEach((id) =>
         set.add({
           coverImg: this.doc[id].coverImg,
@@ -160,17 +162,21 @@ class InvertedIndex {
       let term = inputTerm.map((data) => this.doStemming(data).join());
       res = this.verifyTermIsArray(term);
       for (let word of Object.values(res)) {
-        word.slice(0, 5).forEach((id) =>
-          set.add({
-            coverImg: this.doc[id].coverImg,
-            title: this.doc[id].title,
-          })
-        );
+        if (word !== undefined) {
+          word.slice(0, 5).forEach((id) =>
+            set.add({
+              coverImg: this.doc[id].coverImg,
+              title: this.doc[id].title,
+            })
+          );
+        }
       }
 
       const response = Array.from(set);
       return response;
     }
+
+    return [];
   }
 
   /**
@@ -183,7 +189,7 @@ class InvertedIndex {
     return termArray.reduce((acc, word) => {
       word = word.toLowerCase();
       if (!(word in this.invertedIndexObject)) {
-        acc[word] = "No match has been made";
+        acc[word] = undefined;
       } else {
         acc[word] = this.invertedIndexObject[word];
       }
@@ -203,7 +209,7 @@ class InvertedIndex {
 
     term = term.toLowerCase().replace(/\W+/g, "");
     if (!(term in this.invertedIndexObject)) {
-      return "No match has been made";
+      return undefined;
     } else {
       return this.invertedIndexObject[term];
     }
