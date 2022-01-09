@@ -13,10 +13,12 @@
     "@emotion/styled": "^11.3.0",
     "axios": "^0.23.0",
     "framer-motion": "^4.1.17",
+    "preact": "^10.6.4",
     "react": "^17.0.0",
     "react-dom": "^17.0.0"
   },
   "devDependencies": {
+    "@prefresh/vite": "^2.2.6",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@vitejs/plugin-react": "^1.0.0",

@@ -26,6 +26,7 @@ import { server } from "./utils/server";
 export default function App() {
   const searchRef = useRef<HTMLInputElement>(null);
 
+  // TODO: Convert to a store with reducers
   const [books, setBooks] = useState<ResponseData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [notFound, setNotFound] = useState(false);
